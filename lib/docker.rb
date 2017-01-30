@@ -28,6 +28,8 @@ module Docker
   require 'docker/network'
   require 'docker/event'
   require 'docker/exec'
+  require 'docker/service'
+  require 'docker/task'
   require 'docker/image'
   require 'docker/messages_stack'
   require 'docker/messages'
