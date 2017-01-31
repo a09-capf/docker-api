@@ -23,8 +23,11 @@ class Docker::Service
   end
 
   # Update the Service.
-  def update(query, opts)
-    connection.post(path_for(:update), query, body: opts.to_json)
+  def update(query = {}, opts = {})
+    service_info = Docker::Service.get(self.id).info
+    service_name = service_info.fetch('Spec').fetch('Name')
+    service_version = service_info.fetch('Version').fetch('Index').to_i
+    connection.post(path_for(:update), { 'version' => service_version }.merge(query), body: { 'Name' => service_name }.merge(opts).to_json)
   end
 
   # Remove the Service.
