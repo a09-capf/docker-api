@@ -4,7 +4,7 @@ class Docker::Volume
 
   # /volumes/volume_name doesnt return anything
   def remove(opts = {}, conn = Docker.connection)
-    conn.delete("/volumes/#{id}")
+    conn.delete("/volumes/#{id}", opts)
   end
 
   def normalize_hash(hash)
@@ -22,7 +22,7 @@ class Docker::Volume
 
     # /volumes endpoint returns an array of hashes incapsulated in an Volumes tag
     def all(opts = {}, conn = Docker.connection)
-      resp = conn.get('/volumes')
+      resp = conn.get('/volumes', opts)
       json = Docker::Util.parse_json(resp) || {}
       hashes = json['Volumes'] || []
       hashes.map { |hash| new(conn, hash) }
