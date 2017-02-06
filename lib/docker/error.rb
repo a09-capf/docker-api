@@ -37,4 +37,7 @@ module Docker::Error
 
   # Raised when an IO action fails.
   class IOError < DockerError; end
+
+  # Raised when an experimental feature not implemented is called.
+  class NotImplementedError < DockerError; end
 end

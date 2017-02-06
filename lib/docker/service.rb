@@ -38,17 +38,25 @@ class Docker::Service
   alias_method :delete, :remove
 
   def logs(opts = {})
-    connection.get(path_for(:logs), opts)
+    begin
+      connection.get(path_for(:logs), opts)
+    rescue Excon::Error::NotImplemented
+      raise NotImplementedError, "This feature is only supported with experimental daemon."
+    end
   end
 
   def streaming_logs(opts = {}, &block)
-    stack_size = opts.delete('stack_size') || -1
-    tty = opts.delete('tty') || opts.delete(:tty) || false
-    msgs = Docker::MessagesStack.new(stack_size)
-    excon_params = {response_block: Docker::Util.attach_for(block, msgs, tty)}
+    begin
+      stack_size = opts.delete('stack_size') || -1
+      tty = opts.delete('tty') || opts.delete(:tty) || false
+      msgs = Docker::MessagesStack.new(stack_size)
+      excon_params = {response_block: Docker::Util.attach_for(block, msgs, tty)}
 
-    connection.get(path_for(:logs), opts, excon_params)
-    msgs.messages.join
+      connection.get(path_for(:logs), opts, excon_params)
+      msgs.messages.join
+    rescue Excon::Error::NotImplemented
+      raise NotImplementedError, "This feature is only supported with experimental daemon."
+    end
   end
 
   # Convenience method to return the path for a particular resource.
